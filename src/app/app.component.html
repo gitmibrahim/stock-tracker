@@ -1,0 +1,11 @@
+
+<div class="container">
+  <h1>Stock Tracker</h1>
+  <div class="stock-grid">
+    <app-stock-card
+      *ngFor="let stock of stocks | async"
+      [stock]="stock"
+      [isMobile]="isMobile">
+    </app-stock-card>
+  </div>
+</div>
