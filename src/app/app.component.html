@@ -1,7 +1,9 @@
-
 <div class="container">
   <h1>Stock Tracker</h1>
-  <div class="stock-grid">
+  <div *ngIf="isLoading$ | async" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+  <div class="stock-grid" [class.loading]="isLoading$ | async">
     <app-stock-card
       *ngFor="let stock of stocks | async"
       [stock]="stock"

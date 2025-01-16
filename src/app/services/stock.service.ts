@@ -10,6 +10,8 @@ export class StockService {
   private stocks: Map<string, BehaviorSubject<Stock>> = new Map();
   private readonly symbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA'];
   private mockWebSocket: any;
+  private _isLoading = new BehaviorSubject<boolean>(true);
+  isLoading$ = this._isLoading.asObservable();
 
   constructor() {
     this.initializeStocks();
@@ -36,6 +38,7 @@ export class StockService {
   }
 
   private startMockWebSocket(): void {
+    let isFirstIteration = true;
     this.mockWebSocket = interval(2000).subscribe(() => {
       this.stocks.forEach((stockSubject, symbol) => {
         if (stockSubject.value.isEnabled) {
@@ -61,6 +64,10 @@ export class StockService {
           stockSubject.next(updatedStock);
         }
       });
+      if (isFirstIteration) {
+        this._isLoading.next(false);
+        isFirstIteration = false;
+      }
     });
   }
 

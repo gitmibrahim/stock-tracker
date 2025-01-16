@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { StockCardComponent } from './components/stock-card/stock-card.component';
 import { StockService } from './services/stock.service';
 import { Stock } from './models/stock.interface';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, combineLatest, of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -15,9 +15,11 @@ import { Observable, combineLatest } from 'rxjs';
 export class AppComponent implements OnDestroy {
   stocks: Observable<Stock[]>;
   isMobile = window.innerWidth <= 600;
+  isLoading$: Observable<boolean> = of(false);
   private resizeListener: () => void;
 
   constructor(private stockService: StockService) {
+    this.isLoading$ = this.stockService.isLoading$;
     this.stocks = combineLatest(
       ['AAPL', 'GOOGL', 'MSFT', 'TSLA'].map(symbol =>
         this.stockService.getStock(symbol)
