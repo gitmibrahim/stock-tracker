@@ -2,8 +2,6 @@
 
 A modern, real-time stock tracking application built with Angular 19, featuring animated stock cards and live price updates.
 
-![Stock Tracker Demo](demo.gif)
-
 ## Features
 
 - Real-time stock price updates
