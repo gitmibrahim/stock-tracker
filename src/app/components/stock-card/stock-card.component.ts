@@ -1,10 +1,10 @@
-import { Component, Input, Output, EventEmitter, HostBinding, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Stock } from '../../models/stock.interface';
-import { StockService } from '../../services/stock.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { StockService } from '../../services/stock.service';
+import { Stock } from '../../models/stock.interface';
 
 @Component({
   selector: 'app-stock-card',
@@ -36,26 +36,37 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   ]
 })
 export class StockCardComponent {
-  @Input() stock?: Stock;
-  @Input() isMobile = false;
-  @Output() toggle = new EventEmitter<void>();
+  private stockSignal = signal<Stock | null>(null);
+  
+  @Input() set stock(value: Stock) {
+    this.stockSignal.set(value);
+  }
+  
+  @Input() set isMobile(value: boolean) {
+    this.isMobileSignal.set(value);
+  }
+  
+  private isMobileSignal = signal<boolean>(false);
 
-  previousPrice?: number;
+  // Computed values
+  readonly symbol = computed(() => this.stockSignal()?.symbol);
+  readonly price = computed(() => this.stockSignal()?.price);
+  readonly change = computed(() => this.stockSignal()?.change || 0);
+  readonly changePercent = computed(() => this.stockSignal()?.changePercent || 0);
+  readonly lastTrade = computed(() => this.stockSignal()?.lastTrade);
+  readonly volume = computed(() => this.stockSignal()?.volume);
+  readonly weekHigh52 = computed(() => this.stockSignal()?.weekHigh52);
+  readonly weekLow52 = computed(() => this.stockSignal()?.weekLow52);
+  readonly isPositive = computed(() => (this.stockSignal()?.change || 0) >= 0);
+  readonly isEnabled = computed(() => this.stockSignal()?.isEnabled || false);
+  readonly cardState = computed(() => this.isEnabled() ? 'enabled' : 'disabled');
+  readonly isMobileValue = computed(() => this.isMobileSignal());
 
   constructor(private stockService: StockService) {}
 
-  ngOnChanges() {
-    if (this.stock?.price !== this.previousPrice) {
-      this.previousPrice = this.stock?.price;
+  toggleStock(): void {
+    if (this.stockSignal()) {
+      this.stockService.toggleStock(this.stockSignal()!.symbol);
     }
-  }
-
-  toggleStock() {
-    this.stockService.toggleStock(this.stock!.symbol);
-    this.toggle.emit();
-  }
-
-  @HostBinding('@cardState') get cardState() {
-    return this.stock?.isEnabled ? 'enabled' : 'disabled';
   }
 }

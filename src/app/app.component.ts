@@ -1,9 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StockCardComponent } from './components/stock-card/stock-card.component';
 import { StockService } from './services/stock.service';
-import { Stock } from './models/stock.interface';
-import { Observable, combineLatest, of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,27 +11,27 @@ import { Observable, combineLatest, of } from 'rxjs';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnDestroy {
-  stocks: Observable<Stock[]>;
-  isMobile = window.innerWidth <= 600;
-  isLoading$: Observable<boolean> = of(false);
-  private resizeListener: () => void;
+  isMobile = signal<boolean>(window.innerWidth <= 600);
+  readonly stocks = computed(() => this.stockService.stocks());
+  readonly isLoading = computed(() => this.stockService.isLoading());
 
   constructor(private stockService: StockService) {
-    this.isLoading$ = this.stockService.isLoading$;
-    this.stocks = combineLatest(
-      ['AAPL', 'GOOGL', 'MSFT', 'TSLA'].map(symbol =>
-        this.stockService.getStock(symbol)
-      )
-    );
-
-    this.resizeListener = () => {
-      this.isMobile = window.innerWidth <= 600;
-    };
-    window.addEventListener('resize', this.resizeListener);
+    // Effect for handling resize events
+    effect(() => {
+      const handleResize = () => {
+        this.isMobile.set(window.innerWidth <= 600);
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    });
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('resize', this.resizeListener);
     this.stockService.cleanup();
   }
 }
+

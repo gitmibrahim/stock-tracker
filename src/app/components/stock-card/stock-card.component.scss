@@ -9,7 +9,7 @@ mat-card {
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 16px;
+  padding: 32px 16px;
   
   &.negative {
     background: linear-gradient(to bottom, #ffffff, #fff5f5);
@@ -134,3 +134,14 @@ mat-card {
   }
 }
 
+.mat-mdc-card-header, .mat-mdc-card-content, .mat-mdc-card-actions {
+  padding: 0 16px;
+}
+
+.mat-mdc-card-content {
+  margin: 16px 0;
+}
+
+.mat-mdc-card-actions {
+  min-height: unset;
+}
