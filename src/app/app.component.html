@@ -1,13 +1,13 @@
 <div class="container">
   <h1>Stock Tracker</h1>
-  <div *ngIf="isLoading$ | async" class="loading-spinner">
+  <div *ngIf="isLoading()" class="loading-spinner">
     <div class="spinner"></div>
   </div>
-  <div class="stock-grid" [class.loading]="isLoading$ | async">
+  <div class="stock-grid" [class.loading]="isLoading()">
     <app-stock-card
-      *ngFor="let stock of stocks | async"
+      *ngFor="let stock of stocks()"
       [stock]="stock"
-      [isMobile]="isMobile">
+      [isMobile]="isMobile()">
     </app-stock-card>
   </div>
 </div>

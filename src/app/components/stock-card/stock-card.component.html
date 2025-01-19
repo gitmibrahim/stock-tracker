@@ -1,32 +1,31 @@
-<mat-card class="stock-card" [@cardState]="cardState">
+<mat-card class="stock-card" [@cardState]="cardState()">
   <mat-card-header>
-    <mat-card-title>{{ stock?.symbol }}</mat-card-title>
-    <mat-card-subtitle [@priceChange]="stock?.price">
-      ${{ stock?.price | number:'1.2-2' }}
+    <mat-card-title>{{ symbol() }}</mat-card-title>
+    <mat-card-subtitle [@priceChange]="price()">
+      ${{ price() | number:'1.2-2' }}
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <div class="change-info" [class.positive]="stock && stock.change >= 0" [class.negative]="stock && stock.change < 0">
-      <span [@priceChange]="stock?.change">{{ stock?.change | number:'1.2-2' }}</span>
-      <span [@priceChange]="stock?.changePercent">({{ stock?.changePercent | number:'1.2-2' }}%)</span>
+    <div class="change-info" [class.positive]="isPositive()" [class.negative]="!isPositive()">
+      <span [@priceChange]="change()">{{ change() | number:'1.2-2' }}</span>
+      <span [@priceChange]="changePercent()">({{ changePercent() | number:'1.2-2' }}%)</span>
     </div>
     <div class="trade-info">
-      <p>Last Trade: {{ stock?.lastTrade | date:'h:mm:ss a' }}</p>
-      <p>VOL: {{ stock?.volume | number }}</p>
+      <p>Last Trade: {{ lastTrade() | date:'h:mm:ss a' }}</p>
+      <p>VOL: {{ volume() | number }}</p>
     </div>
-    <div class="price-info" *ngIf="!isMobile">
-      <p>52W High: ${{ stock?.weekHigh52 | number:'1.2-2' }}</p>
-      <p>52W Low: ${{ stock?.weekLow52 | number:'1.2-2' }}</p>
+    <div class="price-info" *ngIf="!isMobileValue()">
+      <p>52W High: ${{ weekHigh52() | number:'1.2-2' }}</p>
+      <p>52W Low: ${{ weekLow52() | number:'1.2-2' }}</p>
     </div>
   </mat-card-content>
   <mat-card-actions>
-    <button class="custom-toggle" (click)="toggleStock()" [class.enabled]="stock?.isEnabled">
+    <button class="custom-toggle" (click)="toggleStock()" [class.enabled]="isEnabled()">
       <div class="toggle-button">
-        <div class="toggle-circle">
-          <span class="toggle-icon">|||</span>
-        </div>
-        <span class="toggle-text">{{ stock?.isEnabled ? 'ON' : 'OFF' }}</span>
+        <div class="toggle-circle"></div>
+        <span class="toggle-text">{{ isEnabled() ? 'ON' : 'OFF' }}</span>
       </div>
     </button>
   </mat-card-actions>
 </mat-card>
+
